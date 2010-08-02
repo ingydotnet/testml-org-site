@@ -257,7 +257,7 @@ into one list.
 
 =head1 A Data section can be in TestML markup, YAML, JSON or XML.
 
-Any of these formts can be used to serialize the same TestML data
+Any of these formats can be used to serialize the same TestML data
 blocks.
 
 In fact, if you use more than one data section source, they can be in
