@@ -1,3 +1,3 @@
 ^ TestML Community
 
-Join us on IRC. #cdent on irc.freenode.net.
+Join us on IRC. #testml on irc.freenode.net.
