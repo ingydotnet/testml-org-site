@@ -4,7 +4,7 @@ A Software Testing Meta Language
 
 =head1 Status
 
-Working Draft - 31 July, 2010
+Working Draft - 2 August, 2010
 
 This document is the TestML Language Specification. Version 1.0
 Pre-release.
@@ -281,9 +281,9 @@ NOTE: Non-PRINTABLE characters are not allowed in a TestML stream. The
 
 =item ANY: /./ # Any character except newline
 
-=item SPACE: /[\ \t]/ # A space or tab character
+=item BLANK: /[\ \t]/ # A space or tab character
 
-=item SPACES: /\ \t/ # For inclusion in character classes
+=item BLANKS: /\ \t/ # For inclusion in character classes
 
 =item BREAK: /\n/ # A newline character
 
@@ -298,6 +298,8 @@ NOTE: Non-PRINTABLE characters are not allowed in a TestML stream. The
 =item DIGIT: /[0-9]/ # A numeric digit
 
 =item EQUAL: /=/ # An equals sign
+
+=item TILDE: /~/ # A tilde character
 
 =item STAR: /\*/ # An asterisk
 
@@ -342,7 +344,7 @@ One of the escapable string characters
 A line is a string of zero or more non break characters followed by
 a line ending.
 
-=item blank_line: <SPACE>* <EOL>
+=item blank_line: <BLANK>* <EOL>
 
 Blank lines are useful to space things out visually.
 
@@ -352,7 +354,7 @@ Comments start with a '#' and go to the end of the line. Comments are
 only allowed where specifically permitted by the grammar. Comments are
 treated like insignificant whitespace and ignored by the parser.
 
-=item ws: <SPACE> | <EOL> | <comment>
+=item ws: <BLANK> | <EOL> | <comment>
 
 The C<ws> token represents characters in the stream that can be
 thrown away.
@@ -381,7 +383,7 @@ characters 't', 'n' or '0' respectively.
     "\tline 1\n\"line\" 2\n"
 
 =item unquoted_string:
-    /([^<SPACES><BREAK><HASH>](?:[^<BREAK><HASH>]*[^<SPACES><BREAK><HASH>])?)/
+    /([^<BLANKS><BREAK><HASH>](?:[^<BREAK><HASH>]*[^<BLANKS><BREAK><HASH>])?)/
 
 AN unquoted string is the first to last non-space characters on a line
 before an optional comment.
@@ -436,8 +438,8 @@ statement declared.
 The parsing of the meta section should instantiate a Meta object.
 
 =item meta_testml_statement:
-    /%TestML:/ <SPACE>+ <testml_version>
-    [ <SPACE>+ <comment> | <EOL> ]
+    /%TestML:/ <BLANK>+ <testml_version>
+    [ <BLANK>+ <comment> | <EOL> ]
 
 The meta C<testml> statement is required, must be the first meta
 statement, and must specify a valid TestML release version number.
@@ -447,11 +449,11 @@ statement, and must specify a valid TestML release version number.
 Currently the only valid version number is '1.0'.
 
 =item meta_statement:
-    /%/ <meta_keyword> /:/ <SPACE>+ <meta_value>
-    [ <SPACE>+ <comment> | <EOL> ]
+    /%/ <meta_keyword> /:/ <BLANK>+ <meta_value>
+    [ <BLANK>+ <comment> | <EOL> ]
 
 Meta statements are key/value pairs separated by a colon and a
-SPACE.
+BLANK.
 
 NOTE: A given meta setting may affect the document parsing/grammar from
 that point forward.
@@ -529,7 +531,7 @@ test operation by comparing the results of two data expressions.
 =item test_expression:
     <sub_expression>
     [
-        <!assertion_call>
+        <!assertion_call_test>
         <call_indicator>
         <sub_expression>
     ]*
@@ -630,6 +632,11 @@ The above two rules can be combined when Pegex has better syntax for lists.
 =item transform_argument: <sub_expression>
 
 Any sub-expression can be a transform function argument.
+
+=item assertion_call_test:
+    /<call_indicator>(?:EQ|OK|HAS)<LPAREN>/
+
+This rule is a quick test to see if an assertion follows.
 
 =item assertion_call:
     <assertion_eq> |
@@ -732,7 +739,7 @@ Here is an example data section in TestML:
     --- input: xyz
     --- output: 321
 
-=item yaml_data_section:  ( <DASH> <DASH> <DASH> <SPACE>* <EOL> <rest> )
+=item yaml_data_section:  ( <DASH> <DASH> <DASH> <BLANK>* <EOL> <rest> )
 
 Here is an example data section in YAML:
 
@@ -763,6 +770,8 @@ Here is an example data section in JSON:
 
 =item xml_data_section: ( <LANGLE> <rest> )
 
+Here is an example data section in XML:
+
     <testml>
       <block label="Test one">
         <input>abc</input>
@@ -791,8 +800,8 @@ A data block in TestML syntax looks like:
 
 =item block_header:
     <block_marker>
-    [ <SPACE>+ <block_label> ]?
-    <SPACE>* <EOL>
+    [ <BLANK>+ <block_label> ]?
+    <BLANK>* <EOL>
 
 A block header marks the start of a new block. The first one also marks
 the start of the data section. It contains an optional label.
@@ -820,9 +829,9 @@ compares. They come in two flavors, lines and phrases.
 
 =item lines_point:
     <point_marker>
-    <SPACE>+
+    <BLANK>+
     <point_name>
-    <SPACE>* <EOL>
+    <BLANK>* <EOL>
     <point_lines>
 
 A "lines" data point encodes a string containing zero or more lines. If
@@ -840,9 +849,9 @@ All the lines before the next block or point header.
 
 =item phrase_point:
     <point_marker>
-    <SPACE>+
+    <BLANK>+
     <point_name>
-    <COLON> <SPACE>
+    <COLON> <BLANK>
     <point_phrase>
     <EOL>
     [ <comment> | <blank_line> ]*
